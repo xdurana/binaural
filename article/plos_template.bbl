@@ -1,0 +1,113 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+\providecommand{\bibAnnoteFile}[1]{%
+  \IfFileExists{#1}{\begin{quotation}\noindent\textsc{Key:} #1\\
+  \textsc{Annotation:}\ \input{#1}\end{quotation}}{}}
+\providecommand{\bibAnnote}[2]{%
+  \begin{quotation}\noindent\textsc{Key:} #1\\
+  \textsc{Annotation:}\ #2\end{quotation}}
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem{oster1973auditory}
+Oster G (1973) Auditory beats in the brain.
+\newblock Scientific American 229: 94--102.
+\bibAnnoteFile{oster1973auditory}
+
+\bibitem{smith1975far}
+Smith JC, Marsh JT, Brown WS (1975) Far-field recorded frequency-following
+  responses: evidence for the locus of brainstem sources.
+\newblock Electroencephalography and clinical neurophysiology 39: 465--472.
+\bibAnnoteFile{smith1975far}
+
+\bibitem{wahbeh2007binaural}
+Wahbeh H, Calabrese C, Zwickey H (2007) Binaural beat technology in humans: a
+  pilot study to assess psychologic and physiologic effects.
+\newblock The Journal of Alternative and Complementary Medicine 13: 25--32.
+\bibAnnoteFile{wahbeh2007binaural}
+
+\bibitem{foster1990eeg}
+Foster DS (1990) EEG and subjective correlates of alpha frequency binaural
+  beats stimulation combined with alpha biofeedback.
+\newblock Ph.D. thesis, Memphis State University.
+\bibAnnoteFile{foster1990eeg}
+
+\bibitem{rogers1981methods}
+Rogers L, Walter D (1981) Methods for finding single generators, with
+  application to auditory driving of the human eeg by complex stimuli.
+\newblock Journal of Neuroscience Methods 4: 257--265.
+\bibAnnoteFile{rogers1981methods}
+
+\bibitem{owens1998binaural}
+Owens JD, Kasian~Justine E, Marsh GR (1998) Binaural auditory beats affect
+  vigilance performance and mood.
+\newblock Physiology \& behavior 63: 249--252.
+\bibAnnoteFile{owens1998binaural}
+
+\bibitem{beatty1974operant}
+Beatty J, Greenberg A, Deibler WP, O'Hanlon JF (1974) Operant control of
+  occipital theta rhythm affects performance in a radar monitoring task.
+\newblock Science 183: 871--873.
+\bibAnnoteFile{beatty1974operant}
+
+\bibitem{crespo2012effects}
+Crespo~Pelayo AdC, Recuero~L{\'o}pez M, G{\'a}lvez~Garc{\'\i}a GM,
+  Bego{\~n}a~Monco A (2012) Effects of binaural stimulation in attention and
+  eeg .
+\bibAnnoteFile{crespo2012effects}
+
+\bibitem{rosenfield2009optometry}
+Rosenfield M, Logan N, Edwards K (2009) Optometry: Science, Techniques and
+  Clinical Management.
+\newblock Butterworth Heinemann Elsevier.
+\bibAnnoteFile{rosenfield2009optometry}
+
+\bibitem{stroop1935studies}
+Stroop JR (1935) Studies of interference in serial verbal reactions.
+\newblock Journal of experimental psychology 18: 643.
+\bibAnnoteFile{stroop1935studies}
+
+\bibitem{Bajaj2013a}
+Bajaj JS, Thacker LR, Heuman DM, Fuchs M, Sterling RK, et~al. (2013) {The
+  Stroop smartphone application is a short and valid method to screen for
+  minimal hepatic encephalopathy.}
+\newblock Hepatology (Baltimore, Md) 58: 1122--32.
+\bibAnnoteFile{Bajaj2013a}
+
+\bibitem{Lachaud2011a}
+Lachaud CM, Renaud O (2011) {A tutorial for analyzing human reaction times: How
+  to filter data, manage missing values, and choose a statistical model}.
+\newblock Applied Psycholinguistics 32: 389--416.
+\bibAnnoteFile{Lachaud2011a}
+
+\bibitem{Whelan2010}
+Whelan R (2010) {Effective analysis of reaction time data}.
+\newblock The Psychological Record : 475--482.
+\bibAnnoteFile{Whelan2010}
+
+\bibitem{Baayen2010}
+Baayen R, Milin P (2010) {Analyzing reaction times}.
+\newblock International Journal of Psychological \ldots .
+\bibAnnoteFile{Baayen2010}
+
+\bibitem{Ratcliff1993}
+Ratcliff R (1993) {Methods for dealing with reaction time outliers.}
+\newblock Psychological bulletin 114: 510--32.
+\bibAnnoteFile{Ratcliff1993}
+
+\bibitem{VanZandt2000}
+{Van Zandt} T (2000) {How to fit a response time distribution.}
+\newblock Psychonomic bulletin \& review 7: 424--65.
+\bibAnnoteFile{VanZandt2000}
+
+\bibitem{Baayen2008}
+Baayen R, Davidson D, Bates D (2008) {Mixed-effects modeling with crossed
+  random effects for subjects and items}.
+\newblock Journal of Memory and Language 59: 390--412.
+\bibAnnoteFile{Baayen2008}
+
+\end{thebibliography}

@@ -1,0 +1,203 @@
+\documentclass{article}
+\usepackage{hyperref}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\title{Effect of beta and delta/theta frequencies of binaural beats on attention in a neutral and incongruent Stroop task or whatever}
+\date{}
+\maketitle
+
+\section*{Results}
+
+Reaction times to a single item were subjected to a two-way repeated measures analysis of variance. The two factors analysed were the two levels of Stroop task (neutral, incongruent) and two types of sound (beta, delta/theta), making four different conditions. Previously to the ANOVA, outlier removal was established independently for each subject, in each condition.
+
+The analysis yelded a main effect for the Stroop levels as expected, \(F\)(1,19)=14.89, \(p\)<.001, such that the reaction times were significantly lower for the neutral (\(M\)=1.20, \(SD\)=0.17) than for the incongruent level (\(M\)=1.29, \(SD\)=0.24).
+
+The average reacion time for a single item in the Stroop test for the delta/theta frequency sound (\(M\)=1.23, \(SD\)=0.20) was slightly lower than for the beta frequency sound, so the main effect of binaural beats frequencies were not significant, \(F\)(1,19)=0.68, \(p\)>.1. The interaction effect between the two factors was also not significant, \(F\)(1,19)=0.685, \(p\)>.1.
+
+The errors on the Stroop task were reported to measure accuracy as the number of completed trials divided by the total trials. An analysis of variance was performed to determine if the binaural beats frequencies had an effect on the accuracy of the Stroop task, but it was non significant, \(F\)(1,19)=2.55, \(p\)>.1.
+
+<<echo=FALSE>>=
+require(ggplot2)
+require(plyr)
+require(xtable)
+
+setwd("~/Dropbox/R/binaural-beats")
+@
+
+\section*{Data processing and reporting tools}
+
+A Ruby script was used to prepare for analysis the raw files returned by the EncephalApp. R was used to automatize the analysis of the data and R integrated with Sweave to build this report. Raw data and all R scripts used in the analysis and the reporting can be found at \url{https://github.com/xdurana/R/tree/master/binaural-beats}
+
+\section*{Analysis of the reaction time}
+
+\begin{itemize}
+
+\item[1] Read the file with all the single measures and define the factors. Calculate the mean and the standard deviation of each group. A group is defined by a subject, a stroop level (off, on) and a type of sound (a, b)
+<<>>=
+setwd("~/Dropbox/R/binaural-beats")
+source(file="encephalapp.R")
+stroop <- read.csv("items.csv", header=T)
+stroop$i<-(stroop$trial-1)*10+stroop$item
+stroop$mean <- ave(stroop$time, stroop$subject, stroop$sound, stroop$level, FUN=mean)
+stroop$median <- ave(stroop$time, stroop$subject, stroop$sound, stroop$level, FUN=median)
+stroop$sd <- ave(stroop$time, stroop$subject, stroop$sound, stroop$level, FUN=sd)
+stroop$mad <- ave(stroop$time, stroop$subject, stroop$sound, stroop$level, FUN=mad)
+@
+
+\item[2] Plot the histogram 
+<<fig=TRUE>>=
+hist(stroop$time, breaks=200)
+@
+
+\item[3] Plot the summary and the boxplot of the data for each group to see the outliers
+<<fig=TRUE>>=
+summary(stroop)
+boxplot(stroop$time~stroop$sound+stroop$level+stroop$subject)
+@
+<<fig=TRUE>>=
+s = 2
+data = stroop[stroop$subject == s,]$time
+skewness(data)
+kurtosis(data)
+qqmath(~time|level*sound, groups=subject, data = stroop)
+#qqnorm(data);
+#qqline(data, col = 2)
+@
+
+\item[4] Remove the outliers that are beyond the mean + 2*sd of each group
+<<fig=TRUE>>=
+stroop <- stroop[stroop$time < stroop$median + stroop$time*stroop$mad,]
+hist(stroop$time, breaks=200)
+@
+<<fig=TRUE>>=
+summary(stroop)
+boxplot(stroop$time~stroop$sound+stroop$level+stroop$subject)
+@
+<<fig=TRUE>>=
+s = 2
+data = stroop[stroop$subject == s,]$time
+skewness(data)
+kurtosis(data)
+qqmath(~time|level*sound, groups=subject, data = stroop)
+@
+
+\item[5] Transform the function to the inverse of RT
+<<fig=TRUE>>=
+stroop$time_inverse <- 1/(stroop$time)
+stroop$time <- stroop$time_inverse
+summary(stroop)
+boxplot(stroop$time~stroop$sound+stroop$level+stroop$subject)
+@
+<<fig=TRUE>>=
+s = 2
+data = stroop[stroop$subject == s,]$time
+skewness(data)
+kurtosis(data)
+qqmath(~time|level*sound, groups=subject, data = stroop)
+#qqnorm(data);
+#qqline(data, col = 2)
+@
+
+\item[6] Summarize the mean reaction time of each group and plot the boxplots for each level and condition
+<<>>=
+  summary = ddply(stroop, .(subject, age, gender, sound, level, sequence), summarise, rt=mean(time), sd=sd(time), shapiro=enc_shapiro(time))
+
+  summary$level = factor(summary$level)
+  summary$sound = factor(summary$sound, labels=c("beta", "delta/theta"))
+  summary$subject = factor(summary$subject)
+  summary$sequence = factor(summary$sequence)
+  str(summary)
+@
+<<fig=TRUE>>=
+boxplot(summary$rt~summary$sound+summary$level,
+main = "Reaction time distribution for each condition",
+xlab = "condition",
+ylab = "reaction time (s)")
+@
+<<fig=TRUE,echo=TRUE>>=
+boxplot(summary$rt~summary$sound,
+main = "Reaction time distribution for each sound",
+names = c("beta","delta/theta"),
+xlab = "type of sound",
+ylab = "reaction time (s)")
+@
+<<>>=
+describeBy(summary, summary$sound, mat=TRUE)[,c("group1","n","mean","sd","min","median","max")][19,]
+describeBy(summary, summary$sound, mat=TRUE)[,c("group1","n","mean","sd","min","median","max")][20,]
+@
+<<fig=TRUE,echo=TRUE>>=
+boxplot(summary$rt~summary$level,
+main = "Reaction time distribution for each Stroop level",
+names = c("neutral","incongruent"),
+xlab = "Stroop level",
+ylab = "reaction time (s)")
+@
+<<fig=TRUE,echo=TRUE>>=
+boxplot(summary$rt~summary$sequence,
+main = "Reaction time distribution for the sequence of sounds",
+xlab = "Sequence",
+ylab = "reaction time (s)")
+@
+
+\item[7] Interaction plot between the two factors. The lines are nearly parallel, so it seems that there's no interaction between the two factors.
+<<fig=TRUE,echo=TRUE>>=
+interaction.plot(summary$level, summary$sound, summary$rt)
+@
+
+\item[8] Two-way repeated measures ANOVA
+<<echo=TRUE,results=tex>>=
+anova <- aov(rt~(sound*level+Error(subject/(sound*level))), data=summary)
+anova.table <- xtable(anova, caption="Repeated measures ANOVA", label="Table:ANOVA")
+print(anova.table, floating=FALSE)
+@
+
+\item[9] Post-hoc comparison for the binaural beats
+<<echo=TRUE>>=
+effect = ddply(summary, .(subject, sound), summarise, rt=mean(rt))
+t.test(rt ~ sound, data=effect, paired=TRUE)
+tapply(effect$rt, effect$sound, FUN=mean)
+tapply(effect$rt, effect$sound, FUN=sd)
+@
+
+\item[10]
+<<>>=
+compare <- summary
+compare[compare$level == 'off']$time = - compare[compare$level == 'off']$time
+compare <- ddply(compare, .(subject, age, gender, sound, sequence), summarise, difference=sum(time))
+@
+
+
+\end{itemize}
+
+\section*{Analysis of the errors}
+
+\begin{itemize}
+
+\item[1] Read the file with the summary per group and define the factors
+<<echo=TRUE>>=
+stroop <- read.csv("accumulated.csv", header=T)
+stroop$sound = factor(stroop$sound)
+stroop$subject = factor(stroop$subject)
+summary(stroop)
+@
+
+\item[2] Plot the boxplot
+<<fig=TRUE,echo=TRUE>>=
+boxplot(stroop$accuracy~stroop$sound,
+main = "Accuracy for each sound",
+xlab = "type of sound",
+ylab = "accuracy")
+@
+
+\item[3] One-way repeated measures ANOVA for the Stroop task total errors
+<<echo=TRUE,results=tex>>=
+anova <- aov(accuracy~(sound+Error(subject/sound)), data=stroop)
+anova.table <- xtable(anova, caption="One-way ANOVA for accuracy", label="Table:ANOVA")
+print(anova.table, floating=FALSE)
+@
+
+\end{itemize}
+
+\end{document}

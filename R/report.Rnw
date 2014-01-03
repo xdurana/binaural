@@ -1,0 +1,112 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{hyperref}
+\usepackage[a4paper]{geometry}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\title{Effect of beta and delta/theta frequencies of binaural beats on attention in a neutral and incongruent Stroop task or whatever}
+\date{}
+\maketitle
+
+<<echo=FALSE>>=
+setwd("~/Dropbox/R/binaural-beats")
+source(file="report.R")
+@
+
+\section*{Data processing and reporting tools}
+
+A Ruby script was used to prepare for analysis the raw files returned by the EncephalApp. R was used to automatize the analysis of the data and R integrated with Sweave to build this report. Raw data and all R scripts used in the analysis and the reporting can be found at \url{https://github.com/xdurana/R/tree/master/binaural-beats}.
+
+\section*{Analysis of the reaction time (RT)}
+
+\begin{itemize}
+
+\item[1] Read the file with all the single measures and define the factors. For each group, calculate the descriptive statistics for the dependent variable RT: mean, standard deviation, median and median absolute deviation. A group is defined by a subject, a Stroop level (off, on) and a type of sound (a, b). The data file item.csv can be found at \url{https://github.com/xdurana/R/blob/master/binaural-beats/items.csv}.
+
+\item[2] Plot the histogram, the summary of the data and the QQPlot for each condition.
+<<echo=TRUE,fig=TRUE>>=
+hist(stroop$time, breaks=200)
+ddply(stroop, .(sound), summarise, mean=mean(time), sd=sd(time))
+ddply(stroop, .(level), summarise, mean=mean(time), sd=sd(time))
+@
+<<echo=TRUE,fig=TRUE>>=
+qqmath(~time|level*sound, groups=subject, data=stroop)
+@
+
+\item[3] Boxplot for each group to see the outliers.
+<<echo=TRUE,fig=TRUE>>=
+boxplot(stroop$time~stroop$sound+stroop$level+stroop$subject)
+@
+
+\item[4] Remove the outliers that are beyond the mean + 2*sd of each group, and plot the graphics.
+<<echo=TRUE,fig=TRUE>>=
+hist(stroop_without_outliers$time, breaks=200)
+ddply(stroop_without_outliers, .(sound), summarise, mean=mean(time), sd=sd(time))
+ddply(stroop_without_outliers, .(level), summarise, mean=mean(time), sd=sd(time))
+@
+<<echo=TRUE,fig=TRUE>>=
+qqmath(~time|level*sound, groups=subject, data=stroop_without_outliers)
+@
+
+\item[5] Another boxplot for each group.
+<<echo=TRUE,fig=TRUE>>=
+boxplot(stroop_without_outliers$time~stroop_without_outliers$sound+stroop_without_outliers$level+stroop_without_outliers$subject)
+@
+
+\item[6] Summarize the mean reaction time of each group and plot the boxplots for each level and condition
+<<echo=TRUE,fig=TRUE>>=
+interaction.plot(summary$level, summary$sound, summary$time)
+@
+<<echo=TRUE,fig=TRUE>>=
+bwplot(time ~ sound | level, data=summary, panel=f.mean, par.settings=bwtheme, layout=c(2,1))
+mean = ddply(summary, .(sound,level), summarise, mean=mean(time))
+ddply(summary, .(sound, level), summarise, mean=mean(time), sd=sd(time))
+boxplot(summary$time~summary$sound+summary$level,
+main = "Reaction time distribution for each condition",
+xlab = "condition",
+ylab = "reaction time (s)")
+@
+<<echo=TRUE,fig=TRUE>>=
+mean = ddply(summary, .(sound), summarise, mean=mean(time))
+ddply(summary, .(sound), summarise, mean=mean(time), sd=sd(time))
+boxplot(summary$time~summary$sound,
+main = "Reaction time distribution for each sound",
+names = c("beta","delta/theta"),
+xlab = "type of sound",
+ylab = "reaction time (s)")
+points(mean, pch = 4)
+@
+<<echo=TRUE,fig=TRUE>>=
+mean = ddply(summary, .(level), summarise, mean=mean(time))
+ddply(summary, .(level), summarise, mean=mean(time), sd=sd(time))
+boxplot(summary$time~summary$level,
+main = "Reaction time distribution for each Stroop level",
+names = c("neutral","incongruent"),
+xlab = "Stroop level",
+ylab = "reaction time (s)")
+points(mean, pch = 4)
+@
+<<echo=TRUE,fig=TRUE>>=
+mean = ddply(summary, .(sequence), summarise, mean=mean(time))
+ddply(summary, .(sequence), summarise, mean=mean(time), sd=sd(time))
+boxplot(summary$time~summary$sequence,
+main = "Reaction time distribution for the sequence of sounds",
+xlab = "Sequence",
+ylab = "reaction time (s)")
+points(mean, pch = 4)
+@
+
+\item[7] Two-way repeated measures ANOVA
+<<echo=TRUE,results=tex>>=
+print(anova.table, floating=FALSE)
+@
+
+\item[8] Post-hoc comparison for the binaural beats
+<<echo=TRUE,fig=FALSE>>=
+print(test)
+@
+
+\end{itemize}
+
+\end{document}
